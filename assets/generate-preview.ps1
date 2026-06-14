@@ -56,23 +56,23 @@ $g.DrawLine($pen, $ax1, $ay, $ax2, $ay)
 $g.DrawString("sends F24", (Font 'Consolas' 18 'Bold'), $blue, 318, ($ay - 44))
 
 # Two device chips with a toggle
-$chipX = 500
-$hp = RoundRect $chipX $cy 360 64 16
+$chipX = 500; $chipW = 300
+$hp = RoundRect $chipX $cy $chipW 64 16
 $g.FillPath((Brush '#102A1A'), $hp)
 $g.DrawPath((New-Object System.Drawing.Pen((C '#3FB950'), 2)), $hp)
-$g.FillEllipse($green, ($chipX + 22), ($cy + 22), 20, 20)
-$g.DrawString("Headphones  (Elgato Wave:3)", (Font 'Segoe UI Semibold' 22 'Bold'), $white, ($chipX + 60), ($cy + 16))
+$g.FillEllipse($green, ($chipX + 24), ($cy + 22), 20, 20)
+$g.DrawString("Headphones", (Font 'Segoe UI Semibold' 24 'Bold'), $white, ($chipX + 64), ($cy + 15))
 
 $sy = $cy + 86
-$sp = RoundRect $chipX $sy 360 64 16
+$sp = RoundRect $chipX $sy $chipW 64 16
 $g.FillPath((Brush '#172033'), $sp)
 $g.DrawPath((New-Object System.Drawing.Pen((C '#2A3754'), 2)), $sp)
 $ring = New-Object System.Drawing.Pen((C '#8B949E'), 3)
-$g.DrawEllipse($ring, ($chipX + 22), ($sy + 22), 20, 20)
-$g.DrawString("Speakers  (Realtek USB2.0)", (Font 'Segoe UI Semibold' 22 'Bold'), $muted, ($chipX + 60), ($sy + 16))
+$g.DrawEllipse($ring, ($chipX + 24), ($sy + 22), 20, 20)
+$g.DrawString("Speakers", (Font 'Segoe UI Semibold' 24 'Bold'), $muted, ($chipX + 64), ($sy + 15))
 
-# ⇄ between the chips
-$g.DrawString([char]0x21C4, (Font 'Segoe UI' 30 'Bold'), $blue, ($chipX + 372), ($cy + 60))
+# ⇄ to the right of the chips, vertically centered between them
+$g.DrawString([char]0x21C4, (Font 'Segoe UI' 34 'Bold'), $blue, ($chipX + $chipW + 22), ($cy + 52))
 
 # --- Bottom strip: badges + URL, both centered on their own line ---
 $ctr = New-Object System.Drawing.StringFormat; $ctr.Alignment = 'Center'
