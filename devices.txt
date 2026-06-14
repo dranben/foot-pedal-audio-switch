@@ -1,0 +1,5 @@
+# Foot Pedal Audio Switch — the two outputs the pedal toggles between.
+# First two non-comment lines = device A and device B (name substrings).
+# Run choose-devices.ps1 to set these interactively, or just edit them here.
+Elgato Wave:3
+Realtek USB2.0 Audio

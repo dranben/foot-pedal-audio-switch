@@ -1,90 +1,147 @@
-# Foot Pedal Audio Switch
+# 🦶🔊 Foot Pedal Audio Switch
 
-Tap a USB foot pedal to toggle the default Windows playback device between two
-outputs — in my setup, **Headphones (Elgato Wave:3)** and **Speakers (Realtek
-USB2.0 Audio)**. Runs silently in the background every time the PC is on.
+**Tap a USB foot pedal to instantly switch your Windows sound between two outputs** —
+headphones and speakers, for example. It runs silently in the background and
+starts with Windows, so switching audio is always one foot-tap away. No more
+digging through the sound menu mid-game, mid-call, or mid-stream.
 
-> **Using your own gear?** It works with any USB foot pedal that can be
-> programmed to send a keystroke (built for an [iKKEGOL](https://www.ikkegol.com)
-> single pedal), and any two playback devices. Put your two device names in
-> `toggle-audio.ps1` (see [If a device gets renamed / replaced](#if-a-device-gets-renamed--replaced))
-> and run `setup.ps1`.
-
-## How it works
+![Platform](https://img.shields.io/badge/platform-Windows%2010%20%2F%2011-0078D6?logo=windows)
+![AutoHotkey](https://img.shields.io/badge/AutoHotkey-v2-334b4c?logo=autohotkey)
+![PowerShell](https://img.shields.io/badge/PowerShell-5%2B-5391FE?logo=powershell&logoColor=white)
+![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
 
 ```
-foot pedal  --(sends F24)-->  pedal-listener.ahk  -->  toggle-audio.ps1
-                               (always running)        (flips the default device)
+ ┌──────────┐   sends    ┌─────────────────────┐   runs   ┌──────────────────┐
+ │  foot    │ ──F24──▶   │ pedal-listener.ahk  │ ──────▶  │ toggle-audio.ps1 │
+ │  pedal   │            │  (always running)   │          │  flips default   │
+ └──────────┘            └─────────────────────┘          │  playback device │
+                                                          └──────────────────┘
+   tap  ───────────────────────────────────────────────▶  🔊 Headphones ⇄ Speakers
 ```
 
-- **toggle-audio.ps1** — flips the default playback device (and the
-  "communication" default, so Discord/Teams follow too). Matches devices by
-  name, so it keeps working even if Windows reshuffles device indexes.
-- **pedal-listener.ahk** — tiny always-on AutoHotkey v2 script. The pedal's
-  key (**F24**) triggers the toggle. Shows a brief `🔊 Speakers` / `🔊 Headphones`
-  tooltip. Lives in the system tray (right-click for *Toggle now / Reload / Exit*).
-- **setup.ps1** — one-time installer (already run): installs the audio module +
-  AutoHotkey, and drops a shortcut in your Startup folder so it auto-launches.
+Built for an [iKKEGOL](https://www.ikkegol.com) single mechanical foot pedal +
+an Elgato Wave:3 and a Realtek USB output, but it works with **any USB foot
+pedal that can send a keystroke** and **any two playback devices**.
 
-## ⚠️ One thing left to do: program the pedal to send F24
+---
 
-The PC side is fully installed and running. The pedal just needs to emit the
-key the listener is waiting for.
+## Why
 
-1. Download the ikkegol **FootSwitch** configuration app (the utility that came
-   with the pedal — "FootSwitch.exe" / "HID FootSwitch"). Plug the pedal in.
-2. Open the app. It shows the single pedal as one button.
-3. Set the pedal's action to **Keyboard**, then record/select the key **F24**.
-   - If the app's key list doesn't include F24, pick another rare key/combo it
-     *does* support (e.g. **F13–F24**, or **Ctrl+Alt+F12**), then update the
-     hotkey in `pedal-listener.ahk` to match (see below) and double-click the
-     script to reload.
-4. Click **Apply / Set** to write it to the pedal's onboard memory.
-5. Tap the pedal — audio should flip, with a tooltip confirming.
+Windows has no built-in hotkey to change the default audio output. If you
+regularly bounce between, say, headphones for focus and speakers to share
+sound, you're stuck clicking through Settings every time. A foot pedal makes it
+a reflex — your hands never leave the keyboard.
 
-### Changing the key the listener waits for
+## Features
 
-In `pedal-listener.ahk`, change the line:
+- **One-tap toggle** between any two playback devices.
+- **Follows you everywhere** — sets both the default *and* the "communication"
+  device, so Discord / Teams / Zoom switch too.
+- **Silent & always-on** — tiny tray app, auto-starts at login, no console flashes.
+- **Zero-edit setup** — an interactive picker writes your device choices; no
+  code editing needed.
+- **Robust** — matches devices by name, so it keeps working when Windows
+  reshuffles device numbers.
+- **Brief on-screen confirmation** (`🔊 Speakers` / `🔊 Headphones`) on each tap.
 
-```ahk
-F24:: DoToggle()
+## Requirements
+
+- Windows 10 or 11
+- A USB foot pedal that can be programmed to send a keystroke (e.g. iKKEGOL /
+  PCsensor). Any programmable pedal, macro key, or even a spare keyboard key works.
+- The setup script installs the rest for you (AutoHotkey v2 + the
+  [AudioDeviceCmdlets](https://github.com/frgnca/AudioDeviceCmdlets) module).
+
+## Quick start
+
+```powershell
+git clone https://github.com/dranben/foot-pedal-audio-switch.git
+cd foot-pedal-audio-switch
+
+# 1. Pick your two audio devices (writes devices.txt) — no code editing:
+powershell -ExecutionPolicy Bypass -File .\choose-devices.ps1
+
+# 2. Install dependencies + register it to start with Windows + run it now:
+powershell -ExecutionPolicy Bypass -File .\setup.ps1
 ```
 
-to your chosen key, e.g. `^!F12:: DoToggle()` for Ctrl+Alt+F12. Save, then
-right-click the tray icon → **Reload** (or double-click the .ahk).
+Then **program your pedal to send `F24`** (see below) and you're done — tap to switch.
 
-## Why F24?
+## Program the pedal
 
-F24 is a real key in the keyboard HID spec, but no physical keyboard has it and
-nothing in Windows uses it — so the pedal can never collide with a real shortcut.
+The listener waits for the **F24** key (a real key that exists in the HID spec
+but no physical keyboard has and nothing in Windows uses — so it can never
+collide with a real shortcut). Point your pedal at it:
+
+1. Install your pedal's configuration app. For iKKEGOL / PCsensor pedals that's
+   **FootSwitch**, from <https://www.ikkegol.com/downloads.html>.
+2. Plug in the pedal, open the app, set the pedal action to **Keyboard**, and
+   assign the key **F24**. Click **Apply / Set** to save it to the pedal.
+3. Tap the pedal — your audio flips, with a `🔊` confirmation.
+
+> **App doesn't offer F24?** Pick any rare key/combo it *does* support
+> (F13–F24, or e.g. Ctrl+Alt+F12), then change the `F24:: DoToggle()` line in
+> [`pedal-listener.ahk`](pedal-listener.ahk) to match and reload it from the tray.
 
 ## Everyday use
 
-- It's already running and set to start with Windows. Nothing to launch.
+- It's already running and starts with Windows — nothing to launch.
 - Right-click the tray speaker icon for **Toggle audio now / Reload / Exit**.
-- To stop it starting with Windows: delete
-  `…\Start Menu\Programs\Startup\FootPedalAudioSwitch.lnk`.
+- Change devices anytime: re-run `choose-devices.ps1` (or edit
+  [`devices.txt`](devices.txt)) and reload from the tray.
 
-## If a device gets renamed / replaced
+## Configuration
 
-Edit the two lines at the top of `toggle-audio.ps1`:
+`devices.txt` holds the two outputs (first two non-comment lines = device A and
+B, matched as name substrings):
 
-```powershell
-$HEADPHONES = 'Elgato Wave:3'
-$SPEAKERS   = 'Realtek USB2.0 Audio'
+```
+Elgato Wave:3
+Realtek USB2.0 Audio
 ```
 
-List current names anytime with:
+List current device names anytime:
 
 ```powershell
 Get-AudioDevice -List | Where-Object Type -eq Playback | Select Index,Default,Name
 ```
 
-## Files
+## How it works
 
 | File | Purpose |
 |------|---------|
-| `toggle-audio.ps1`   | Switches the default playback device |
-| `pedal-listener.ahk` | Catches the pedal key, runs the toggle |
-| `setup.ps1`          | One-time installer + Startup registration |
-| `README.md`          | This file |
+| [`pedal-listener.ahk`](pedal-listener.ahk) | Tiny always-on AutoHotkey v2 tray app. The pedal's key (F24) triggers the toggle. |
+| [`toggle-audio.ps1`](toggle-audio.ps1) | Flips the default playback (+ communication) device. Reads `devices.txt`. |
+| [`choose-devices.ps1`](choose-devices.ps1) | Interactive picker → writes `devices.txt`. |
+| [`setup.ps1`](setup.ps1) | One-shot installer: deps + Startup shortcut + launch. |
+| [`devices.txt`](devices.txt) | Your two devices. |
+
+## Troubleshooting
+
+- **Nothing happens on tap** → Confirm the pedal sends F24: open Notepad and
+  tap it (F24 prints nothing, so instead test with the tray menu →
+  *Toggle audio now*; if that works, the pedal key is the issue — reprogram it).
+- **"device not found"** → Names changed or the device is unplugged; re-run
+  `choose-devices.ps1`.
+- **Listener not running** → Re-run `setup.ps1`, or double-click
+  `pedal-listener.ahk`.
+
+## Uninstall
+
+- Delete the Startup shortcut: `…\Start Menu\Programs\Startup\FootPedalAudioSwitch.lnk`
+- Right-click the tray icon → **Exit**, then delete the folder.
+- Optionally uninstall AutoHotkey and the AudioDeviceCmdlets module.
+
+## Credits
+
+- Default-device switching via [frgnca/AudioDeviceCmdlets](https://github.com/frgnca/AudioDeviceCmdlets).
+- Hotkey listening via [AutoHotkey v2](https://www.autohotkey.com/).
+
+## License
+
+[MIT](LICENSE) — free to use, modify, and share.
+
+<sub>Keywords: switch default audio output device Windows hotkey · foot pedal
+audio switcher · change playback device shortcut · AutoHotkey audio toggle ·
+iKKEGOL / PCsensor FootSwitch · Elgato Wave / Realtek · Discord communication
+device switch.</sub>
