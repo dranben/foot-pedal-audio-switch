@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/social-preview.png" alt="Foot Pedal Audio Switch — tap a USB foot pedal to switch your Windows sound" width="840">
+</p>
+
 # 🦶🔊 Foot Pedal Audio Switch
 
 **Tap a USB foot pedal to instantly switch your Windows sound between two outputs** —
@@ -9,15 +13,6 @@ digging through the sound menu mid-game, mid-call, or mid-stream.
 ![AutoHotkey](https://img.shields.io/badge/AutoHotkey-v2-334b4c?logo=autohotkey)
 ![PowerShell](https://img.shields.io/badge/PowerShell-5%2B-5391FE?logo=powershell&logoColor=white)
 ![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
-
-```
- ┌──────────┐   sends    ┌─────────────────────┐   runs   ┌──────────────────┐
- │  foot    │ ──F24──▶   │ pedal-listener.ahk  │ ──────▶  │ toggle-audio.ps1 │
- │  pedal   │            │  (always running)   │          │  flips default   │
- └──────────┘            └─────────────────────┘          │  playback device │
-                                                          └──────────────────┘
-   tap  ───────────────────────────────────────────────▶  🔊 Headphones ⇄ Speakers
-```
 
 Built for an [iKKEGOL](https://www.ikkegol.com) single mechanical foot pedal +
 an Elgato Wave:3 and a Realtek USB output, but it works with **any USB foot
