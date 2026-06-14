@@ -1,0 +1,7 @@
+# Vendor's FootSwitch installer — not ours to redistribute.
+# Download it from https://www.ikkegol.com/downloads.html (see README).
+ikkegol-app/
+
+# Runtime scratch
+*.log
+footpedal_audio_result.txt
